@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -9,8 +9,8 @@ $pathInfo = $request->getPathInfo();
 $response = new Response();
 
 $map = [
-    '/hello' => __DIR__ . '/src/pages/hello.php',
-    '/bye' => __DIR__ . '/src/pages/bye.php'
+    '/hello' => __DIR__ . '/../src/pages/hello.php',
+    '/bye' => __DIR__ . '/../src/pages/bye.php'
 ];
 
 if (isset($map[$pathInfo])) {
