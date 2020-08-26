@@ -9,12 +9,14 @@ $pathInfo = $request->getPathInfo();
 $response = new Response();
 
 $map = [
-    '/hello' => 'hello.php',
-    '/bye' => 'bye.php'
+    '/hello' => __DIR__ . '/src/pages/hello.php',
+    '/bye' => __DIR__ . '/src/pages/bye.php'
 ];
 
 if (isset($map[$pathInfo])) {
-    include __DIR__ . '/src/pages/' . $map[$pathInfo];
+    ob_start();
+    include $map[$pathInfo];
+    $response->setContent(ob_get_clean());
 } else {
     $response
         ->setStatusCode(404)
