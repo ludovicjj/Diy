@@ -14,6 +14,7 @@ $map = [
 ];
 
 if (isset($map[$pathInfo])) {
+    extract($request->query->all());
     ob_start();
     include $map[$pathInfo];
     $response->setContent(ob_get_clean());
