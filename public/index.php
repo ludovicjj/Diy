@@ -5,22 +5,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
-use Symfony\Component\Routing\RouteCollection;
-use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 $request = Request::createFromGlobals();
 $response = new Response();
-
-$routes = new RouteCollection();
-$routes->add('hello', new Route('/hello/{name}', ['name' => 'World']));
-$routes->add('bye', new Route('/bye'));
+$routeCollection = require_once __DIR__ . '/../src/routes.php';
+$pathInfo = $request->getPathInfo();
 
 $context = new RequestContext();
 $context->fromRequest($request);
-$urlMatcher = new UrlMatcher($routes, $context);
+$urlMatcher = new UrlMatcher($routeCollection, $context);
 
-$pathInfo = $request->getPathInfo();
 
 try {
     extract($urlMatcher->match($pathInfo), EXTR_SKIP);
