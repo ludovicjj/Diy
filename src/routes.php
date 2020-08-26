@@ -3,8 +3,8 @@
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
 
-$routeCollection = new RouteCollection();
-$routeCollection->add('hello', new Route('/hello/{name}', ['name' => 'World']));
-$routeCollection->add('bye', new Route('/bye'));
+$routes = new RouteCollection();
+$routes->add('hello', new Route('/hello/{name}', ['name' => 'World']));
+$routes->add('bye', new Route('/bye'));
 
-return $routeCollection;
+return $routes;
