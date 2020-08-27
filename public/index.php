@@ -7,15 +7,10 @@ use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
-// Init request
-$request = Request::createFromGlobals();
-// Get RouteCollection
-$routes = include __DIR__ . '/../src/routes.php';
-
-$context = new RequestContext();
-$context->fromRequest($request);
-$urlMatcher = new UrlMatcher($routes, $context);
-
+/**
+ * @param Request $request
+ * @return Response
+ */
 function defaultController(Request $request): Response {
     $params = $request->attributes->all();
     extract($params);
@@ -28,11 +23,20 @@ function defaultController(Request $request): Response {
     return new Response(ob_get_clean());
 }
 
+// Init request
+$request = Request::createFromGlobals();
+// Get RouteCollection
+$routes = include __DIR__ . '/../src/routes.php';
+
+$context = new RequestContext();
+$context->fromRequest($request);
+$urlMatcher = new UrlMatcher($routes, $context);
+
 try {
     // Hydrate ParameterBag with associative array
     $request->attributes->add($urlMatcher->match($request->getPathInfo()));
     // Run callback with hydrated request
-    $response = call_user_func('defaultController', $request);
+    $response = call_user_func($request->attributes->get('_controller'), $request);
 
 } catch (ResourceNotFoundException $e) {
     $response = new Response('Page not found', 404);
