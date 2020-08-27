@@ -16,20 +16,27 @@ $context = new RequestContext();
 $context->fromRequest($request);
 $urlMatcher = new UrlMatcher($routes, $context);
 
-try {
-    extract($urlMatcher->match($request->getPathInfo()), EXTR_SKIP);
+function defaultController(Request $request): Response {
+    $params = $request->attributes->all();
+    extract($params);
     ob_start();
     /**
      * @var $_route string
      * @noinspection PhpIncludeInspection
      */
-    include sprintf(__DIR__ . '/../src/pages/%s.php', $_route);
-    $response = new Response(ob_get_clean());
-} catch (ResourceNotFoundException $exception) {
-    $response = new Response('Page not found', 404);
-} catch (Exception $exception) {
-    $response = new Response('Oops something is broken', 500);
+    include sprintf(__DIR__.'/../src/pages/%s.php', $_route);
+    return new Response(ob_get_clean());
 }
 
-$response->send();
+try {
+    // Hydrate ParameterBag with associative array
+    $request->attributes->add($urlMatcher->match($request->getPathInfo()));
+    // Run callback with hydrated request
+    $response = call_user_func('defaultController', $request);
 
+} catch (ResourceNotFoundException $e) {
+    $response = new Response('Page not found', 404);
+} catch (Exception $e) {
+    $response = new Response('Oops something is broken', 500);
+}
+$response->send();
