@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Symfony\Component\Routing\RouteCollection;
 
 /**
  * @param Request $request
@@ -24,8 +25,11 @@ function defaultController(Request $request): Response {
 }
 
 // Init request
+/** @var Request $request */
 $request = Request::createFromGlobals();
+
 // Get RouteCollection
+/** @var RouteCollection $routes */
 $routes = include __DIR__ . '/../src/routes.php';
 
 $context = new RequestContext();
@@ -35,6 +39,7 @@ $urlMatcher = new UrlMatcher($routes, $context);
 try {
     // Hydrate ParameterBag with associative array
     $request->attributes->add($urlMatcher->match($request->getPathInfo()));
+
     // Run callback with hydrated request
     $response = call_user_func($request->attributes->get('_controller'), $request);
 
