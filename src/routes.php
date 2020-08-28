@@ -32,7 +32,7 @@ $routes->add(
         '/is-leap-year/{year}',
         [
             'year' => null,
-            '_controller' => [new LeapYearController(), 'index']
+            '_controller' => 'App\Controller\LeapYearController::index'
         ]
     )
 );
