@@ -1,6 +1,5 @@
 <?php
 
-use App\Controller\LeapYearController;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
 
@@ -12,7 +11,7 @@ $routes->add(
         '/hello/{name}',
         [
             'name' => 'World',
-            '_controller' => 'defaultController'
+            '_controller' => 'App\Controller\DefaultController'
         ]
     )
 );
@@ -21,7 +20,7 @@ $routes->add(
     new Route(
         '/bye',
         [
-            '_controller' => 'defaultController'
+            '_controller' => 'App\Controller\DefaultController'
         ]
     )
 );

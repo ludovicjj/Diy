@@ -10,22 +10,6 @@ use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\RouteCollection;
 
-/**
- * @param Request $request
- * @return Response
- */
-function defaultController(Request $request): Response {
-    $params = $request->attributes->all();
-    extract($params);
-    ob_start();
-    /**
-     * @var $_route string
-     * @noinspection PhpIncludeInspection
-     */
-    include sprintf(__DIR__.'/../src/pages/%s.php', $_route);
-    return new Response(ob_get_clean());
-}
-
 // Init request
 /** @var Request $request */
 $request = Request::createFromGlobals();
