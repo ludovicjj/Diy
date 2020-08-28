@@ -30,10 +30,11 @@ try {
     // Hydrate ParameterBag with associative array
     $request->attributes->add($urlMatcher->match($request->getPathInfo()));
 
+    // Only the controller associated with the matched route is instantiated.
     $controller = $controllerResolver->getController($request);
     $arguments = $argumentResolver->getArguments($request, $controller);
 
-    // Run callback with hydrated request
+    // Run callback with arguments[]
     $response = call_user_func_array($controller, $arguments);
 
 } catch (ResourceNotFoundException $e) {
