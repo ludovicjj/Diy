@@ -27,6 +27,12 @@ $argumentResolver = new ArgumentResolver();
 
 
 try {
+    $class = new ReflectionClass('App\Controller\LeapYearController');
+    $params = $class->getMethod('index')->getParameters();
+    foreach ($params as $param) {
+        var_dump($param->getClass()->name);
+    }
+    die;
     // Hydrate ParameterBag with associative array
     $request->attributes->add($urlMatcher->match($request->getPathInfo()));
 
