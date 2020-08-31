@@ -6,29 +6,29 @@ namespace App\Core;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
-use Symfony\Component\HttpKernel\Controller\ControllerResolver;
+use Symfony\Component\HttpKernel\Controller\ArgumentResolverInterface;
+use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
-use Symfony\Component\Routing\Matcher\UrlMatcher;
+use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 
 class Framework
 {
-    /** @var UrlMatcher $matcher */
+    /** @var UrlMatcherInterface $matcher */
     protected $matcher;
-    /** @var ControllerResolver $controllerResolver */
+    /** @var ControllerResolverInterface $controllerResolver */
     protected $controllerResolver;
-    /** @var ArgumentResolver $argumentResolver */
+    /** @var ArgumentResolverInterface $argumentResolver */
     protected $argumentResolver;
 
     /**
-     * @param UrlMatcher $matcher
-     * @param ControllerResolver $controllerResolver
-     * @param ArgumentResolver $argumentResolver
+     * @param UrlMatcherInterface $matcher
+     * @param ControllerResolverInterface $controllerResolver
+     * @param ArgumentResolverInterface $argumentResolver
      */
     public function __construct(
-        UrlMatcher $matcher,
-        ControllerResolver $controllerResolver,
-        ArgumentResolver $argumentResolver
+        UrlMatcherInterface $matcher,
+        ControllerResolverInterface $controllerResolver,
+        ArgumentResolverInterface $argumentResolver
     )
     {
         $this->matcher = $matcher;
