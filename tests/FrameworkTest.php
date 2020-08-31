@@ -17,10 +17,25 @@ class FrameworkTest extends TestCase
 {
     public function testNotFound()
     {
+        $response = $this->initFrameworkError(new ResourceNotFoundException())->handle(new Request());
+        $this->assertEquals(404, $response->getStatusCode());
+    }
+
+    public function testExceptionHandling()
+    {
+        $response = $this->initFrameworkError(new \Exception())->handle(new Request());
+        $this->assertEquals(500, $response->getStatusCode());
+    }
+
+    /**
+     * @param mixed $exception
+     * @return Framework
+     */
+    private function initFrameworkError($exception)
+    {
         $urlMatcher = $this->createMock(UrlMatcherInterface::class);
         $controllerResolver = $this->createMock(ControllerResolverInterface::class);
         $argumentResolver = $this->createMock(ArgumentResolverInterface::class);
-        $framework = new Framework($urlMatcher, $controllerResolver, $argumentResolver);
 
         $urlMatcher
             ->expects($this->once())
@@ -30,9 +45,8 @@ class FrameworkTest extends TestCase
         $urlMatcher
             ->expects($this->once())
             ->method('match')
-            ->willThrowException(new ResourceNotFoundException());
+            ->willThrowException($exception);
 
-        $response = $framework->handle(new Request());
-        $this->assertEquals(404, $response->getStatusCode());
+        return new Framework($urlMatcher, $controllerResolver, $argumentResolver);
     }
 }
