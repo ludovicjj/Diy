@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Tests;
+namespace Tests\Core;
 
 
 use App\Controller\LeapYearController;
