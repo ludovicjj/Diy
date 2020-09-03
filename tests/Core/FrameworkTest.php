@@ -7,6 +7,7 @@ namespace Tests\Core;
 use App\Controller\LeapYearController;
 use App\Core\Framework;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolverInterface;
@@ -35,6 +36,7 @@ class FrameworkTest extends TestCase
         $urlMatcher = $this->createMock(UrlMatcherInterface::class);
         $controllerResolver = new ControllerResolver();
         $argumentResolver = new ArgumentResolver();
+        $dispatcher = new EventDispatcher();
 
         $urlMatcher
             ->expects($this->once())
@@ -50,7 +52,7 @@ class FrameworkTest extends TestCase
                 "_controller" => [new LeapYearController(), 'index']
             ]);
 
-        $framework = new Framework($urlMatcher, $controllerResolver, $argumentResolver);
+        $framework = new Framework($urlMatcher, $controllerResolver, $argumentResolver, $dispatcher);
         $response = $framework->handle(new Request());
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertStringContainsString('Yep, this is a leap year!', $response->getContent());
@@ -65,6 +67,7 @@ class FrameworkTest extends TestCase
         $urlMatcher = $this->createMock(UrlMatcherInterface::class);
         $controllerResolver = $this->createMock(ControllerResolverInterface::class);
         $argumentResolver = $this->createMock(ArgumentResolverInterface::class);
+        $dispatcher = $this->createMock(EventDispatcher::class);
 
         $urlMatcher
             ->expects($this->once())
@@ -76,6 +79,6 @@ class FrameworkTest extends TestCase
             ->method('match')
             ->willThrowException($exception);
 
-        return new Framework($urlMatcher, $controllerResolver, $argumentResolver);
+        return new Framework($urlMatcher, $controllerResolver, $argumentResolver, $dispatcher);
     }
 }
