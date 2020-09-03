@@ -1,13 +1,19 @@
 <?php
 
 
-namespace App\Listener;
+namespace App\Subscriber;
 
 
 use App\Event\ResponseEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class GoogleListener
+class GoogleSubscriber implements EventSubscriberInterface
 {
+    public static function getSubscribedEvents(): array
+    {
+        return ['response' => 'onResponse'];
+    }
+
     public function onResponse(ResponseEvent $event)
     {
         $response = $event->getResponse();

@@ -2,8 +2,8 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Core\Framework;
-use App\Listener\ContentLengthListener;
-use App\Listener\GoogleListener;
+use App\Subscriber\ContentLengthSubscriber;
+use App\Subscriber\GoogleSubscriber;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
 use Symfony\Component\HttpKernel\Controller\ControllerResolver;
@@ -28,8 +28,8 @@ $argumentResolver = new ArgumentResolver();
 $dispatcher = new EventDispatcher();
 
 // Add Listener
-$dispatcher->addListener('response', [new ContentLengthListener(), 'onResponse'], -255);
-$dispatcher->addListener('response', [new GoogleListener(), 'onResponse']);
+$dispatcher->addSubscriber(new ContentLengthSubscriber());
+$dispatcher->addSubscriber(new GoogleSubscriber());
 
 $framework = new Framework($urlMatcher, $controllerResolver, $argumentResolver, $dispatcher);
 $response = $framework->handle($request);
