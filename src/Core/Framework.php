@@ -4,6 +4,8 @@
 namespace App\Core;
 
 
+use App\Event\ResponseEvent;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolverInterface;
@@ -19,21 +21,26 @@ class Framework
     protected $controllerResolver;
     /** @var ArgumentResolverInterface $argumentResolver */
     protected $argumentResolver;
+    /** @var EventDispatcher $dispatcher */
+    protected $dispatcher;
 
     /**
      * @param UrlMatcherInterface $matcher
      * @param ControllerResolverInterface $controllerResolver
      * @param ArgumentResolverInterface $argumentResolver
+     * @param EventDispatcher $dispatcher
      */
     public function __construct(
         UrlMatcherInterface $matcher,
         ControllerResolverInterface $controllerResolver,
-        ArgumentResolverInterface $argumentResolver
+        ArgumentResolverInterface $argumentResolver,
+        EventDispatcher $dispatcher
     )
     {
         $this->matcher = $matcher;
         $this->controllerResolver = $controllerResolver;
         $this->argumentResolver = $argumentResolver;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -58,6 +65,8 @@ class Framework
             $response = new Response('Oops something is broken', 500);
         }
 
+        // dispatch a response event
+        $this->dispatcher->dispatch(new ResponseEvent($request, $response), 'response');
         return $response;
     }
 }

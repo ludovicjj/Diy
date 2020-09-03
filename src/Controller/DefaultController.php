@@ -23,6 +23,8 @@ class DefaultController
          * @noinspection PhpIncludeInspection
          */
         include sprintf(__DIR__.'/../pages/%s.php', $_route);
-        return new Response(ob_get_clean());
+        $response = new Response(ob_get_clean());
+        $response->headers->add(['Content-Type' => 'text/html; charset=utf-8']);
+        return $response;
     }
 }
