@@ -26,13 +26,21 @@ $dispatcher = new EventDispatcher();
 $controllerResolver = new ControllerResolver();
 $argumentResolver = new ArgumentResolver();
 
-$dispatcher->addListener('response', function(ResponseEvent $event) {
+$dispatcher->addListener('response', function (ResponseEvent $event) {
     $response = $event->getResponse();
-    $header = $response->headers;
+    $headers = $response->headers;
+
+    if (!$headers->has('Content-Length') && !$headers->has('Transfer-Encoding')) {
+        $headers->set('Content-Length', strlen($response->getContent()));
+    }
+}, -255);
+$dispatcher->addListener('response', function (ResponseEvent $event) {
+    $response = $event->getResponse();
+    $headers = $response->headers;
 
     if (
         $response->isRedirection()
-        || ($header->has('Content-Type') && strpos($header->get('Content-Type'), 'html') === false)
+        || ($headers->has('Content-Type') && strpos($headers->get('Content-Type'), 'html') === false)
         || $event->getRequest()->getRequestFormat() !== 'html'
     ) {
         return;
