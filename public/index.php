@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Core\Framework;
+use App\Subscriber\ExceptionSubscriber;
 use App\Subscriber\ContentLengthSubscriber;
 use App\Subscriber\GoogleSubscriber;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,6 +31,7 @@ $dispatcher = new EventDispatcher();
 // Add Listener
 $dispatcher->addSubscriber(new ContentLengthSubscriber());
 $dispatcher->addSubscriber(new GoogleSubscriber());
+$dispatcher->addSubscriber(new ExceptionSubscriber());
 
 $framework = new Framework($urlMatcher, $controllerResolver, $argumentResolver, $dispatcher);
 $response = $framework->handle($request);

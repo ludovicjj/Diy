@@ -36,4 +36,15 @@ $routes->add(
     )
 );
 
+$routes->add(
+    'test',
+    new Route(
+        '/secret/{pwd}',
+        [
+            'pwd' => null,
+            '_controller' => 'App\Controller\PasswordController::index'
+        ]
+    )
+);
+
 return $routes;

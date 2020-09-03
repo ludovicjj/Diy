@@ -6,6 +6,8 @@ namespace Tests\Core;
 
 use App\Controller\LeapYearController;
 use App\Core\Framework;
+use App\Event\ExceptionEvent;
+use App\Subscriber\ExceptionSubscriber;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
@@ -67,7 +69,8 @@ class FrameworkTest extends TestCase
         $urlMatcher = $this->createMock(UrlMatcherInterface::class);
         $controllerResolver = $this->createMock(ControllerResolverInterface::class);
         $argumentResolver = $this->createMock(ArgumentResolverInterface::class);
-        $dispatcher = $this->createMock(EventDispatcher::class);
+        $dispatcher = new EventDispatcher();
+        $dispatcher->addSubscriber(new ExceptionSubscriber());
 
         $urlMatcher
             ->expects($this->once())

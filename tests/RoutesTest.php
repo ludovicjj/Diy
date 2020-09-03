@@ -19,7 +19,7 @@ class RoutesTest extends TestCase
     {
         /** @var RouteCollection $routes */
         $routes = include __DIR__.'/../src/routes.php';
-        $this->assertCount(3, $routes->all());
+        $this->assertCount(4, $routes->all());
     }
 
     public function testArrayKey()
