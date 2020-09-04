@@ -11,6 +11,10 @@ class HomeController
 {
     public function index(Request $request)
     {
-        return new Response("Welcome to home page");
+        $response = new Response("Home Page! ");
+        $response
+            ->setPublic()
+            ->setEtag(md5($response->getContent()));
+        return $response;
     }
 }

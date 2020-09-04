@@ -19,8 +19,13 @@ class LeapYearController
         $calendar = new Calendar();
 
         if ($calendar->isLeapYear($request->attributes->get('year'))) {
-            return new Response('Yep, this is a leap year!');
+            $response = new Response('Yep, this is a leap year!');
+        } else {
+            $response = new Response('Nope, this is not a leap year.');
         }
-        return new Response('Nope, this is not a leap year.');
+        $response
+            ->setPublic()
+            ->setEtag(md5($response->getContent()));
+        return $response;
     }
 }

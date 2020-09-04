@@ -32,10 +32,15 @@ $dispatcher = new EventDispatcher();
 
 // Add Listener
 $dispatcher->addSubscriber(new ContentLengthSubscriber());
-$dispatcher->addSubscriber(new GoogleSubscriber());
+/*$dispatcher->addSubscriber(new GoogleSubscriber());*/
 $dispatcher->addSubscriber(new ExceptionSubscriber());
 
 $framework = new Framework($urlMatcher, $controllerResolver, $argumentResolver, $dispatcher);
 $framework = new HttpCache($framework, new Store(__DIR__.'/../cache'));
+// HttpCache::handle() Determines if the Response validators (ETag, Last-Modified) match
+// a conditional value specified in the Request.
+// it sets the status code to 304 and REMOVE the actual content by calling the setNotModified() method.
+// don't apply ->isNotModified() in controller
 $framework->handle($request)->send();
+
 
