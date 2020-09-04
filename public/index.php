@@ -8,6 +8,8 @@ use App\Subscriber\GoogleSubscriber;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
 use Symfony\Component\HttpKernel\Controller\ControllerResolver;
+use Symfony\Component\HttpKernel\HttpCache\HttpCache;
+use Symfony\Component\HttpKernel\HttpCache\Store;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
@@ -34,5 +36,6 @@ $dispatcher->addSubscriber(new GoogleSubscriber());
 $dispatcher->addSubscriber(new ExceptionSubscriber());
 
 $framework = new Framework($urlMatcher, $controllerResolver, $argumentResolver, $dispatcher);
-$response = $framework->handle($request);
-$response->send();
+$framework = new HttpCache($framework, new Store(__DIR__.'/../cache'));
+$framework->handle($request)->send();
+
