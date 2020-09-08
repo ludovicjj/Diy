@@ -30,13 +30,7 @@ class Framework extends HttpKernel
 
         $dispatcher = new EventDispatcher();
 
-        $errorHandler = function (FlattenException $exception) {
-            $msg = 'Something went wrong! ('.$exception->getMessage().')';
-
-            return new Response($msg, $exception->getStatusCode());
-        };
-
-        $dispatcher->addSubscriber(new ErrorListener($errorHandler));
+        $dispatcher->addSubscriber(new ErrorListener('App\Controller\ErrorController::exception'));
         $dispatcher->addSubscriber(new RouterListener($matcher, $requestStack));
         parent::__construct($dispatcher, $controllerResolver, $requestStack, $argumentResolver);
     }

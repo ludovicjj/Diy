@@ -4,14 +4,14 @@
 namespace App\Controller;
 
 
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\ErrorHandler\Exception\FlattenException;
 use Symfony\Component\HttpFoundation\Response;
 
 class ErrorController
 {
-    public function exception(Request $request)
+    public function exception(FlattenException $exception)
     {
-        $exception = $request->attributes->get('exception');
-        return new Response($exception->getMessage(), $exception->getStatusCode());
+        $content = 'Something went wrong! ('.$exception->getMessage().')';
+        return new Response($content, $exception->getStatusCode());
     }
 }
