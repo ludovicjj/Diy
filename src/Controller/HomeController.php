@@ -9,12 +9,11 @@ use Symfony\Component\HttpFoundation\Response;
 
 class HomeController
 {
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
-        $response = new Response("Home Page! ");
-        $response
-            ->setPublic()
-            ->setEtag(md5($response->getContent()));
-        return $response;
+        ob_start();
+        include __DIR__.'/../pages/home.html';
+        $content = ob_get_clean();
+        return new Response($content);
     }
 }
