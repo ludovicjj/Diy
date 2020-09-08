@@ -14,18 +14,20 @@ class LeapYearController
      * @param Request $request
      * @return Response
      */
-    public function index(Request $request): Response
+    public function index(Request $request)
     {
         $calendar = new Calendar();
-
+        $response = new Response();
         if ($calendar->isLeapYear($request->attributes->get('year'))) {
-            $response = new Response('Yep, this is a leap year!');
+            $response->setContent('Yep, this is a leap year!');
         } else {
-            $response = new Response('Nope, this is not a leap year.');
+            $response->setContent('Nope, this is not a leap year.');
         }
+
         $response
             ->setPublic()
             ->setEtag(md5($response->getContent()));
         return $response;
+
     }
 }
