@@ -4,77 +4,33 @@
 namespace App\Core;
 
 
-use App\Event\ExceptionEvent;
-use App\Event\ResponseEvent;
-use Exception;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Controller\ArgumentResolverInterface;
-use Symfony\Component\HttpKernel\Controller\ControllerResolverInterface;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
+use Symfony\Component\HttpKernel\Controller\ControllerResolver;
+use Symfony\Component\HttpKernel\EventListener\ErrorListener;
+use Symfony\Component\HttpKernel\EventListener\RouterListener;
+use Symfony\Component\HttpKernel\HttpKernel;
+use Symfony\Component\Routing\Matcher\UrlMatcher;
+use Symfony\Component\Routing\RequestContext;
 
-class Framework implements HttpKernelInterface
+class Framework extends HttpKernel
 {
-    /** @var UrlMatcherInterface $matcher */
-    protected $matcher;
-    /** @var ControllerResolverInterface $controllerResolver */
-    protected $controllerResolver;
-    /** @var ArgumentResolverInterface $argumentResolver */
-    protected $argumentResolver;
-    /** @var EventDispatcher $dispatcher */
-    protected $dispatcher;
-
-    /**
-     * @param UrlMatcherInterface $matcher
-     * @param ControllerResolverInterface $controllerResolver
-     * @param ArgumentResolverInterface $argumentResolver
-     * @param EventDispatcher $dispatcher
-     */
-    public function __construct(
-        UrlMatcherInterface $matcher,
-        ControllerResolverInterface $controllerResolver,
-        ArgumentResolverInterface $argumentResolver,
-        EventDispatcher $dispatcher
-    )
+    public function __construct($routes)
     {
-        $this->matcher = $matcher;
-        $this->controllerResolver = $controllerResolver;
-        $this->argumentResolver = $argumentResolver;
-        $this->dispatcher = $dispatcher;
-    }
+        $context = new RequestContext();
+        $matcher = new UrlMatcher($routes, $context);
+        $requestStack = new RequestStack();
 
-    /**
-     * @param Request $request
-     * @param int $type
-     * @param bool $catch
-     * @return Response
-     */
-    public function handle(
-        Request $request,
-        $type = HttpKernelInterface::MASTER_REQUEST,
-        $catch = true
-    ): Response
-    {
-        $this->matcher->getContext()->fromRequest($request);
+        $controllerResolver = new ControllerResolver();
+        $argumentResolver = new ArgumentResolver();
 
-        try {
-            $request->attributes->add($this->matcher->match($request->getPathInfo()));
-            // Only the controller associated with the matched route is instantiated.
-            $controller = $this->controllerResolver->getController($request);
-            $arguments = $this->argumentResolver->getArguments($request, $controller);
-            // Run callable with arguments[]
-            $response = call_user_func_array($controller, $arguments);
 
-        } catch (Exception $e) {
-            $response = new Response();
-            // dispatch a exception event
-            $this->dispatcher->dispatch(new ExceptionEvent($request, $response, $e), 'exception');
-        }
-
-        // dispatch a response event
-        $this->dispatcher->dispatch(new ResponseEvent($request, $response), 'response');
-        return $response;
+        $dispatcher = new EventDispatcher();
+        $dispatcher->addSubscriber(new ErrorListener(
+            'App\Controller\ErrorController::exception'
+        ));
+        $dispatcher->addSubscriber(new RouterListener($matcher, $requestStack));
+        parent::__construct($dispatcher, $controllerResolver, $requestStack, $argumentResolver);
     }
 }
