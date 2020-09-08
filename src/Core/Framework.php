@@ -4,13 +4,12 @@
 namespace App\Core;
 
 
-use Symfony\Component\ErrorHandler\Exception\FlattenException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
 use Symfony\Component\HttpKernel\Controller\ControllerResolver;
 use Symfony\Component\HttpKernel\EventListener\ErrorListener;
+use Symfony\Component\HttpKernel\EventListener\ResponseListener;
 use Symfony\Component\HttpKernel\EventListener\RouterListener;
 use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
@@ -27,11 +26,11 @@ class Framework extends HttpKernel
         $controllerResolver = new ControllerResolver();
         $argumentResolver = new ArgumentResolver();
 
-
         $dispatcher = new EventDispatcher();
-
         $dispatcher->addSubscriber(new ErrorListener('App\Controller\ErrorController::exception'));
         $dispatcher->addSubscriber(new RouterListener($matcher, $requestStack));
+        $dispatcher->addSubscriber(new ResponseListener('UTF-8'));
+
         parent::__construct($dispatcher, $controllerResolver, $requestStack, $argumentResolver);
     }
 }
