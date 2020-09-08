@@ -9,24 +9,20 @@ use Throwable;
 class AccessDeniedException extends \Exception
 {
     private $statusCode;
-    private $errorMessage;
+    protected $message;
 
     public function __construct(
-        int $statusCode,
-        string $errorMessage
+        string $message,
+        int $statusCode
     )
     {
+        $this->message = $message;
         $this->statusCode = $statusCode;
-        $this->errorMessage = $errorMessage;
-        parent::__construct();
+        parent::__construct($message);
     }
 
     public function getStatusCode(): int
     {
         return $this->statusCode;
-    }
-    public function getErrorMessage(): string
-    {
-        return $this->errorMessage;
     }
 }

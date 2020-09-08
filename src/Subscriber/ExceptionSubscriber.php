@@ -4,49 +4,34 @@
 namespace App\Subscriber;
 
 
-use App\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use App\Exception\AccessDeniedException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 class ExceptionSubscriber implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
     {
-        return ['exception' => 'onProcessException'];
+        return [KernelEvents::EXCEPTION => 'onProcessException'];
     }
 
     public function onProcessException(ExceptionEvent $event)
     {
-        switch (get_class($event->getException())) {
+        switch (get_class($event->getThrowable())) {
             case AccessDeniedException::class:
                 $this->onAccessDeniedException($event);
                 break;
-            case ResourceNotFoundException::class:
-                $this->onResourceNotFoundException($event);
-                break;
-            default:
-                $this->onDefaultException($event);
         }
     }
 
     private function onAccessDeniedException(ExceptionEvent $event)
     {
         /** @var AccessDeniedException $exception */
-        $exception = $event->getException();
-        $event->setResponse($exception->getErrorMessage(), $exception->getStatusCode());
-    }
-
-    private function onResourceNotFoundException(ExceptionEvent $event)
-    {
-        /** @var ResourceNotFoundException $exception */
-        $exception = $event->getException();
-        $event->setResponse($exception->getMessage(), Response::HTTP_NOT_FOUND);
-    }
-
-    private function onDefaultException(ExceptionEvent $event)
-    {
-        $event->setResponse('Oops something is broken', Response::HTTP_INTERNAL_SERVER_ERROR);
+        $exception = $event->getThrowable();
+        $event->setResponse(
+            new Response($exception->getMessage(), $exception->getStatusCode())
+        );
     }
 }

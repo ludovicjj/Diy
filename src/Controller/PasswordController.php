@@ -14,12 +14,12 @@ class PasswordController
     {
         if ($request->attributes->get('pwd') !== '123') {
             throw new AccessDeniedException(
-                Response::HTTP_FORBIDDEN,
-                "Please provide a correct password"
+                "Please provide a correct password",
+                Response::HTTP_FORBIDDEN
             );
         }
 
 
-        return new Response('ceci est un test');
+        return new Response('Welcome to secret page');
     }
 }
