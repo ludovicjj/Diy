@@ -21,7 +21,7 @@ $containerBuilder->register('context', RequestContext::class);
 // Matcher
 $containerBuilder
     ->register('matcher', UrlMatcher::class)
-    ->setArguments(['routes', new Reference('context')]);
+    ->setArguments([$routes, new Reference('context')]);
 
 // RequestStack, ContainerResolver, ArgumentResolver
 $containerBuilder->register('request_stack', RequestStack::class );
