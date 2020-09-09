@@ -25,12 +25,12 @@ $containerBuilder
 
 // RequestStack, ContainerResolver, ArgumentResolver
 $containerBuilder->register('request_stack', RequestStack::class );
-$containerBuilder->register('container_resolver', ControllerResolver::class);
+$containerBuilder->register('controller_resolver', ControllerResolver::class);
 $containerBuilder->register('argument_resolver', ArgumentResolver::class);
 
 // Subscriber
 $containerBuilder
-    ->register('listener.route', RouterListener::class)
+    ->register('listener.router', RouterListener::class)
     ->setArguments([new Reference('matcher'), new Reference('request_stack')]);
 $containerBuilder
     ->register('listener.response', ResponseListener::class)
