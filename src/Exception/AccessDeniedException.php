@@ -4,25 +4,12 @@
 namespace App\Exception;
 
 
-use Throwable;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class AccessDeniedException extends \Exception
+class AccessDeniedException extends HttpException
 {
-    private $statusCode;
-    protected $message;
-
-    public function __construct(
-        string $message,
-        int $statusCode
-    )
+    public function __construct(int $statusCode, string $message = null, \Throwable $previous = null, array $headers = [], ?int $code = 0)
     {
-        $this->message = $message;
-        $this->statusCode = $statusCode;
-        parent::__construct($message);
-    }
-
-    public function getStatusCode(): int
-    {
-        return $this->statusCode;
+        parent::__construct($statusCode, $message, $previous, $headers, $code);
     }
 }

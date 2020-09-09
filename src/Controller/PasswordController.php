@@ -14,8 +14,8 @@ class PasswordController
     {
         if ($request->attributes->get('pwd') !== '123') {
             throw new AccessDeniedException(
-                "Please provide a correct password",
-                Response::HTTP_FORBIDDEN
+                Response::HTTP_FORBIDDEN,
+                "Please provide a correct password"
             );
         }
 
